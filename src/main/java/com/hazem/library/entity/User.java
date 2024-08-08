@@ -1,9 +1,10 @@
 package com.hazem.library.entity;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.util.Date;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +16,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -28,17 +30,17 @@ public class User {
 
     @Column(name = "user_name")
     private String userName;
-    
+
     @Column(name = "password_digest")
     private String password;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable=false)
+    private Timestamp createdAt;
 
-    @LastModifiedDate
+    @UpdateTimestamp
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private Timestamp updatedAt;
 
     public User() {
 
@@ -79,7 +81,7 @@ public class User {
         return userName;
     }
 
-    public void setUserNane(String userName) {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
@@ -89,6 +91,22 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Date getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

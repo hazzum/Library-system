@@ -1,10 +1,11 @@
+# Dockerfile
+
 FROM maven:3-eclipse-temurin-17-alpine AS deps
 
 WORKDIR /app
 COPY pom.xml /app
 
 RUN mvn go-offline:resolve-dependencies
-
 
 FROM maven:3-eclipse-temurin-17-alpine AS build
 
@@ -13,6 +14,15 @@ COPY --from=deps /root/.m2/repository /root/.m2/repository
 COPY . /app
 
 RUN mvn package -DskipTests -o
+
+FROM maven:3-eclipse-temurin-17-alpine AS test
+
+WORKDIR /app
+COPY --from=deps /root/.m2/repository /root/.m2/repository
+COPY . /app
+
+# Run the tests
+RUN mvn test
 
 FROM maven:3-eclipse-temurin-17-alpine AS dev
 

@@ -1,9 +1,9 @@
 package com.hazem.library.entity;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -21,7 +21,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "borrowed_book", uniqueConstraints = @UniqueConstraint(columnNames = { "patron_id", "book_id" }))
+@Table(name = "borrowed_book", uniqueConstraints = @UniqueConstraint(columnNames = {"patron_id", "book_id"}))
 public class BorrowedBook {
 
     @Id
@@ -49,13 +49,13 @@ public class BorrowedBook {
     @Column(name = "book_id", nullable = false)
     private Long book_id;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable=false)
+    private Timestamp createdAt;
 
-    @LastModifiedDate
+    @UpdateTimestamp
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private Timestamp updatedAt;
 
     public BorrowedBook() {
 
@@ -105,6 +105,30 @@ public class BorrowedBook {
 
     public void setBook_id(Long book_id) {
         this.book_id = book_id;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Timestamp getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

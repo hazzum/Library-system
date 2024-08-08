@@ -1,9 +1,9 @@
 package com.hazem.library.entity;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,13 +32,14 @@ public class Patron {
     @Column(name = "email")
     private String email;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable=false)
+    private Timestamp createdAt;
 
-    @LastModifiedDate
+    @UpdateTimestamp
+
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private Timestamp updatedAt;
 
     public Patron() {
 
@@ -89,6 +90,22 @@ public class Patron {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Timestamp getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

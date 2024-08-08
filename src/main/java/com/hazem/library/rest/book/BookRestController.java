@@ -49,6 +49,7 @@ public class BookRestController {
     @PutMapping("{bookId}")
     public Book updateBook(@RequestBody Book theBook, @PathVariable Long bookId) {
         bookService.getBook(bookId);
+        theBook.setId(bookId);
         return bookService.updateBook(theBook);
     }
 
