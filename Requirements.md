@@ -146,21 +146,16 @@
 - **URLs**<br />
   POST `/borrow/{book_id}/patron/{patron_id}`<br />
   POST `/return/{book_id}/patron/{patron_id}`<br />
-- **Request body for PUT and POST**<br />
-  `firstName:[string]`<br />
-  `lastName:[string]`<br />
-  `phone:[string]`<br />
-  `email:[string]`<br />
 - **Success Response:**<br />
   - **Code:** 200 <br />
-    **Content:** `Patron or List<Patron> in JSON`<br />
+    **Content:** `BorrowedBook {id, book_id, patron_id, status ("Borrowed", "Returned")} in JSON`<br />
 - **Error Response:**<br />
   - **Code:** 404 <br />
-    **Content:** `{ error : "No patrons found"}, {error : "Patron not found id: {patron_id}" }`<br />
+    **Content:** `{ error : "Book not found, patron not found" }`<br />
   - **Code:** 401 <br />
     **Content:** `{ error : "Full authentication is required to access this resource" }`<br />
   - **Code:** 400 <br />
-    **Content:** `{ error : "Invalid Data" }` <br />
+    **Content:** `{ error : "Invalid Request" }` <br />
   - **Code:** 500 <br />
     **Content:** `{ error : "Internal server error" }` <br />
 - **Satisfied requirements:**<br />
