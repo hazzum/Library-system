@@ -12,10 +12,12 @@ public interface BorrowedBookService {
     List<BorrowedBook> index();
 
     BorrowedBook getBorrowedBook(Long id);
+    
+    BorrowedBook getBorrowedBookByIds(Long bookId, Long patronId);
 
     BorrowedBook createNewBorrowedBook(Long bookId, Long patronId);
 
     BorrowedBook returnBorrowedBook(Long bookId, Long patronId);
 
-    BorrowedBook updateBorrowedBook(BorrowedBook theBorrowedBook);
+    BorrowedBook deleteBorrowedBook(Long id);
 }
