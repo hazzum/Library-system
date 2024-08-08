@@ -36,6 +36,6 @@ library.app.jwtExpirationMs= 86400000
 spring.mvc.dispatch-options-request=true
 ```
 
-#### 2- Make sure Docker is running and run the following command:
+#### 2- Ensure you have Docker and Docker Compose installed and running, and then run the following command:
 
-- `docker-compose up`
+- `docker-compose up` or `sudo docker compose up` depending on your OS.
