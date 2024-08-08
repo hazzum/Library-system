@@ -17,3 +17,5 @@ Ensure you have Docker and Docker Compose installed and running, and then run th
 
 - `docker-compose up test` or `docker compose up test` or `sudo docker compose up test` depending on your OS.
 
+
+## Full Documentation can be found in REQUIREMENTS.md
