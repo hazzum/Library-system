@@ -6,6 +6,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "book")
@@ -15,15 +19,21 @@ public class Book extends AbstractTimestampEntity{
     @Column(name = "id")
     private Long id;
 
+    @NotNull(message = "Title cannot be null")
+    @Size(min = 1, max = 100, message = "Title must be between 1 and 100 characters")
     @Column(name = "title")
     private String title;
 
     @Column(name = "description")
     private String description;
 
+    @NotNull(message = "Author cannot be null")
+    @Size(min = 1, max = 50, message = "Author must be between 1 and 50 characters")
     @Column(name = "author")
     private String author;
-
+    
+    @NotNull(message = "Publication Year cannot be null")
+    @Pattern(regexp = "^\\d{4}$", message = "Publication Year must be a 4-digit number")
     @Column(name = "publication_year")
     private String publicationYear;
 
@@ -33,6 +43,8 @@ public class Book extends AbstractTimestampEntity{
     @Column(name = "price")
     private float price;
 
+    @NotNull(message = "Stock is mandatory")
+    @Min(value = 0, message = "Stock must be at least 0")
     @Column(name = "stock")
     private int stock;
 

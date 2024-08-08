@@ -16,6 +16,8 @@ import com.hazem.library.entity.Book;
 import com.hazem.library.rest.exceptionHandler.NotFoundException;
 import com.hazem.library.service.book.BookService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/books")
 public class BookRestController {
@@ -41,13 +43,13 @@ public class BookRestController {
 
     // add mapping for POST /books - add new book
     @PostMapping("")
-    public Book addBook(@RequestBody Book theBook) {
+    public Book addBook(@Valid @RequestBody Book theBook) {
         return bookService.createBook(theBook);
     }
 
     // add mapping for PUT /books - update existing book
     @PutMapping("{bookId}")
-    public Book updateBook(@RequestBody Book theBook, @PathVariable Long bookId) {
+    public Book updateBook(@Valid @RequestBody Book theBook, @PathVariable Long bookId) {
         bookService.getBook(bookId);
         theBook.setId(bookId);
         return bookService.updateBook(theBook);

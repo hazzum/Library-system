@@ -16,6 +16,8 @@ import com.hazem.library.entity.Patron;
 import com.hazem.library.rest.exceptionHandler.NotFoundException;
 import com.hazem.library.service.patron.PatronService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/patrons")
 public class PatronRestController {
@@ -41,13 +43,13 @@ public class PatronRestController {
 
     // add mapping for POST /patrons - add new patron
     @PostMapping("")
-    public Patron addPatron(@RequestBody Patron thePatron) {
+    public Patron addPatron(@Valid @RequestBody Patron thePatron) {
         return patronService.createPatron(thePatron);
     }
 
     // add mapping for PUT /patrons - update existing patron
     @PutMapping("{patronId}")
-    public Patron updatePatron(@RequestBody Patron thePatron, @PathVariable Long patronId) {
+    public Patron updatePatron(@Valid @RequestBody Patron thePatron, @PathVariable Long patronId) {
         patronService.getPatron(patronId);
         thePatron.setId(patronId);
         return patronService.updatePatron(thePatron);
