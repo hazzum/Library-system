@@ -19,20 +19,12 @@ public class BorrowedBookRestController {
     // add mapping for POST /borrow/{bookId}/patron/{patronId} - borrow new book
     @PostMapping("/borrow/{bookId}/patron/{patronId}")
     public BorrowedBook borrowBook(@PathVariable Long bookId, @PathVariable Long patronId) {
-        try {
-            return borrowedBookService.createNewBorrowedBook(bookId, patronId);
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Could not borrow book");
-        }
+        return borrowedBookService.createNewBorrowedBook(bookId, patronId);
     }
 
     // add mapping for PUT /return/{bookId}/patron/{patronId} - return borrowed Book
     @PutMapping("/return/{bookId}/patron/{patronId}")
     public BorrowedBook updateBorrowedBook(@PathVariable Long bookId, @PathVariable Long patronId) {
-        try {
-            return borrowedBookService.returnBorrowedBook(bookId, patronId);
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Could not borrow book");
-        }
+        return borrowedBookService.returnBorrowedBook(bookId, patronId);
     }
 }

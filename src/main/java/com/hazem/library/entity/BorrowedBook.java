@@ -29,19 +29,19 @@ public class BorrowedBook {
     private BorrowedBookStatus status;
 
     @ManyToOne(targetEntity = Book.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", nullable = false)
+    @JoinColumn(name = "book_id", insertable = false, updatable = false)
     @JsonIgnore
     private Book book;
 
     @ManyToOne(targetEntity = Patron.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "patron_id", nullable = false)
+    @JoinColumn(name = "patron_id", insertable = false, updatable = false)
     @JsonIgnore
     private Patron patron;
 
-    @Column(name = "patron_id")
+    @Column(name = "patron_id", nullable = false)
     private Long patron_id;
 
-    @Column(name = "book_id")
+    @Column(name = "book_id", nullable = false)
     private Long book_id;
 
     public BorrowedBook() {

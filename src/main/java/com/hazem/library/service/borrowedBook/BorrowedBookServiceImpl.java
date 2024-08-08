@@ -63,13 +63,26 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
     @Override
     @Transactional
     public BorrowedBook createNewBorrowedBook(Long bookId, Long patronId) {
+        BorrowedBook theBorrowedBook = null;
         PatronService.getPatron(patronId);
         Book theBook = BookService.getBook(bookId);
         if (theBook.getStock() < 1) {
             throw new BadRequestException(
                     "We have run out of this Book");
         }
-        BorrowedBook theBorrowedBook = new BorrowedBook(bookId, patronId, BorrowedBookStatus.Borrowed);
+        Optional<BorrowedBook> result = BorrowedBookRepository.findFirstByBook_idAndPatron_id(bookId, patronId);
+        if (result.isPresent()) {
+            theBorrowedBook = result.get();
+            if(theBorrowedBook.getStatus() == BorrowedBookStatus.Borrowed) {
+                throw new BadRequestException("This Patron has already borrowed this book and did not return it");
+            }
+            else {
+                theBorrowedBook.setStatus(BorrowedBookStatus.Borrowed);                
+            }
+        }
+        else {
+            theBorrowedBook = new BorrowedBook(bookId, patronId, BorrowedBookStatus.Borrowed);
+        }
         theBook.setStock(theBook.getStock() - 1);
         BookService.updateBook(theBook);
         return BorrowedBookRepository.save(theBorrowedBook);
@@ -80,6 +93,9 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
     public BorrowedBook returnBorrowedBook(Long bookId, Long patronId) {
         Book theBook = BookService.getBook(bookId);
         BorrowedBook theBorrowedBook = getBorrowedBookByIds(bookId, patronId);
+        if(theBorrowedBook.getStatus()==BorrowedBookStatus.Returned) {
+            throw new BadRequestException("This Patron has already returned this book");
+        }
         theBorrowedBook.setStatus(BorrowedBookStatus.Returned);
         theBook.setStock(theBook.getStock() + 1);
         BookService.updateBook(theBook);
