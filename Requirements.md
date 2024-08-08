@@ -24,6 +24,8 @@
 | ------------------ | ---------------------------- | ------------------------------ | -------------------------- |
 | serial primary key | foreign key references(book) | foreign key references(patron) | UNIQUE(book_id, patron_id) |
 
+### All tables have additional hidden columns, created and updated, for creation and update timestamps
+
 ## Application URL
 
 `http://localhost:3000/api`
