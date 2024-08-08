@@ -111,7 +111,7 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
             BookService.updateBook(theBook);
             return BorrowedBookRepository.save(theBorrowedBook);
         } catch (Exception e) {
-            throw new InternalServerErrorException("Could not complete transaction");
+            throw new InternalServerErrorException("Could not complete transaction, rolling back...");
         }
 
     }
@@ -121,22 +121,32 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
     public BorrowedBook returnBorrowedBook(Long bookId, Long patronId) {
         Book theBook;
         BorrowedBook theBorrowedBook;
+        Optional<BorrowedBook> result;
         try {
             theBook = BookService.getBook(bookId);
-            theBorrowedBook = getBorrowedBookByIds(bookId, patronId);
         } catch (Exception e) {
-            throw new InternalServerErrorException("Could not verify borrowed book");
+            throw new InternalServerErrorException("Could not verify book");
         }
-        if (theBorrowedBook.getStatus() == BorrowedBookStatus.Returned) {
-            throw new BadRequestException("This Patron has already returned this book");
-        }
-        theBorrowedBook.setStatus(BorrowedBookStatus.Returned);
-        theBook.setStock(theBook.getStock() + 1);
         try {
-            BookService.updateBook(theBook);
-            return BorrowedBookRepository.save(theBorrowedBook);
+            result = BorrowedBookRepository.findFirstByBook_idAndPatron_id(bookId, patronId);
         } catch (Exception e) {
-            throw new InternalServerErrorException("Could not complete transaction");
+            throw new InternalServerErrorException("Could not verify borrowed book record");
+        }
+        if (result.isPresent()) {
+            theBorrowedBook = result.get();
+            if (theBorrowedBook.getStatus() == BorrowedBookStatus.Returned) {
+                throw new BadRequestException("This Patron has already returned this book");
+            }
+            theBorrowedBook.setStatus(BorrowedBookStatus.Returned);
+            theBook.setStock(theBook.getStock() + 1);
+            try {
+                BookService.updateBook(theBook);
+                return BorrowedBookRepository.save(theBorrowedBook);
+            } catch (Exception e) {
+                throw new InternalServerErrorException("Could not complete transaction, rolling back...");
+            }
+        } else {
+            throw new BadRequestException("This patron has not borrowed this book previously");
         }
     }
 
