@@ -64,7 +64,7 @@ public class WebSecurityConfig {
         .authorizeHttpRequests().shouldFilterAllDispatcherTypes(false)
         .requestMatchers("/users/sign_in").permitAll()
         .requestMatchers("/users/sign_up").permitAll()
-        .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
+        .requestMatchers(HttpMethod.GET, "/books/**").permitAll()
         .anyRequest().authenticated();
 
     http.authenticationProvider(authenticationProvider());

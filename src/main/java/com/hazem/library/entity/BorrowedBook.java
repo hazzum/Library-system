@@ -1,10 +1,5 @@
 package com.hazem.library.entity;
 
-import java.sql.Timestamp;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -22,7 +17,7 @@ import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "borrowed_book", uniqueConstraints = @UniqueConstraint(columnNames = {"patron_id", "book_id"}))
-public class BorrowedBook {
+public class BorrowedBook extends AbstractTimestampEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,14 +43,6 @@ public class BorrowedBook {
 
     @Column(name = "book_id", nullable = false)
     private Long book_id;
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false, nullable=false)
-    private Timestamp createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private Timestamp updatedAt;
 
     public BorrowedBook() {
 
@@ -113,22 +100,6 @@ public class BorrowedBook {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Timestamp getCreatedAt() {
-        return this.createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return this.updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     @Override

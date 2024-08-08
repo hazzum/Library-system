@@ -1,10 +1,5 @@
 package com.hazem.library.entity;
 
-import java.sql.Timestamp;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +9,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "patron")
-public class Patron {
+public class Patron extends AbstractTimestampEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -31,15 +26,6 @@ public class Patron {
 
     @Column(name = "email")
     private String email;
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false, nullable=false)
-    private Timestamp createdAt;
-
-    @UpdateTimestamp
-
-    @Column(name = "updated_at")
-    private Timestamp updatedAt;
 
     public Patron() {
 
@@ -90,22 +76,6 @@ public class Patron {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Timestamp getCreatedAt() {
-        return this.createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return this.updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     @Override
