@@ -1,4 +1,5 @@
 package com.hazem.library.rest.patron;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hazem.library.entity.Patron;
-import com.hazem.library.rest.exceptionHandler.InternalServerErrorException;
 import com.hazem.library.rest.exceptionHandler.NotFoundException;
 import com.hazem.library.service.patron.PatronService;
 
 @RestController
 @RequestMapping("/patrons")
 public class PatronRestController {
+
     @Autowired
     private PatronService patronService;
 
@@ -26,8 +27,9 @@ public class PatronRestController {
     @GetMapping("")
     public List<Patron> index() {
         List<Patron> thePatrons = patronService.index();
-        if (thePatrons.isEmpty())
+        if (thePatrons.isEmpty()) {
             throw new NotFoundException("No patrons found");
+        }
         return thePatrons;
     }
 
@@ -40,41 +42,22 @@ public class PatronRestController {
     // add mapping for POST /patrons - add new patron
     @PostMapping("")
     public Patron addPatron(@RequestBody Patron thePatron) {
-        try {
-            return patronService.createPatron(thePatron);
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Could not create patron");
-        }
+        return patronService.createPatron(thePatron);
     }
 
     // add mapping for PUT /patrons - update existing patron
     @PutMapping("{patronId}")
     public Patron updatePatron(@RequestBody Patron thePatron, @PathVariable Long patronId) {
-        Patron tempPatron = patronService.getPatron(patronId);
-        // throw exception if null
-        if (tempPatron == null)
-            throw new NotFoundException("Patron id not found - " + patronId);
-        // update patron
+        patronService.getPatron(patronId);
         thePatron.setId(patronId);
-        try {
-            return patronService.updatePatron(thePatron);
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Could not update patron");
-        }
+        return patronService.updatePatron(thePatron);
     }
 
     // add mapping Delete /patrons/{patronId} - delete existing patron
     @DeleteMapping("{patronId}")
     public String deletePatron(@PathVariable Long patronId) {
-        Patron tempPatron = patronService.getPatron(patronId);
-        // throw exception if null
-        if (tempPatron == null)
-            throw new NotFoundException("Patron id not found - " + patronId);
-        try {
-            patronService.deletePatron(patronId);
-            return "Deleted Patron id - " + patronId;
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Could not delete patron");
-        }
+        patronService.getPatron(patronId);
+        patronService.deletePatron(patronId);
+        return "Deleted Patron id - " + patronId;
     }
 }

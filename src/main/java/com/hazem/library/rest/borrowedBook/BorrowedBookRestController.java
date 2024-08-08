@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.hazem.library.entity.BorrowedBook;
-import com.hazem.library.rest.exceptionHandler.InternalServerErrorException;
 import com.hazem.library.service.borrowedBook.BorrowedBookService;
 
 @RestController
 @RequestMapping("/")
 public class BorrowedBookRestController {
+
     @Autowired
     private BorrowedBookService borrowedBookService;
 

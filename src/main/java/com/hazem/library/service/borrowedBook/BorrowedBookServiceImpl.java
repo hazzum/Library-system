@@ -5,23 +5,24 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hazem.library.DAO.BorrowedBookRepository;
 import com.hazem.library.entity.Book;
 import com.hazem.library.entity.BorrowedBook;
 import com.hazem.library.entity.BorrowedBookStatus;
 import com.hazem.library.rest.exceptionHandler.BadRequestException;
+import com.hazem.library.rest.exceptionHandler.InternalServerErrorException;
 import com.hazem.library.rest.exceptionHandler.NotFoundException;
 import com.hazem.library.service.book.BookService;
 import com.hazem.library.service.patron.PatronService;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class BorrowedBookServiceImpl implements BorrowedBookService {
 
-    private BorrowedBookRepository BorrowedBookRepository;
-    private BookService BookService;
-    private PatronService PatronService;
+    private final BorrowedBookRepository BorrowedBookRepository;
+    private final BookService BookService;
+    private final PatronService PatronService;
 
     @Autowired
     public BorrowedBookServiceImpl(BorrowedBookRepository theBorrowedBookRepository, BookService theBookService,
@@ -33,13 +34,22 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
 
     @Override
     public List<BorrowedBook> index() {
-        return BorrowedBookRepository.findAllByOrderByIdAsc();
+        try {
+            return BorrowedBookRepository.findAllByOrderByIdAsc();
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Could not retrieve borrowed books");
+        }
     }
 
     @Override
     public BorrowedBook getBorrowedBook(Long id) {
-        Optional<BorrowedBook> result = BorrowedBookRepository.findById(id);
-        BorrowedBook theBorrowedBook = null;
+        Optional<BorrowedBook> result;
+        try {
+            result = BorrowedBookRepository.findById(id);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Could not retrieve borrowed book");
+        }
+        BorrowedBook theBorrowedBook;
         if (result.isPresent()) {
             theBorrowedBook = result.get();
             return theBorrowedBook;
@@ -50,8 +60,13 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
 
     @Override
     public BorrowedBook getBorrowedBookByIds(Long bookId, Long patronId) {
-        Optional<BorrowedBook> result = BorrowedBookRepository.findFirstByBook_idAndPatron_id(bookId, patronId);
-        BorrowedBook theBorrowedBook = null;
+        Optional<BorrowedBook> result;
+        try {
+            result = BorrowedBookRepository.findFirstByBook_idAndPatron_id(bookId, patronId);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Could not retrieve borrowed book");
+        }
+        BorrowedBook theBorrowedBook;
         if (result.isPresent()) {
             theBorrowedBook = result.get();
             return theBorrowedBook;
@@ -63,49 +78,77 @@ public class BorrowedBookServiceImpl implements BorrowedBookService {
     @Override
     @Transactional
     public BorrowedBook createNewBorrowedBook(Long bookId, Long patronId) {
-        BorrowedBook theBorrowedBook = null;
-        PatronService.getPatron(patronId);
-        Book theBook = BookService.getBook(bookId);
+        BorrowedBook theBorrowedBook;
+        Book theBook;
+        try {
+            PatronService.getPatron(patronId);
+            theBook = BookService.getBook(bookId);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Could not verify book or patron");
+        }
         if (theBook.getStock() < 1) {
             throw new BadRequestException(
                     "We have run out of this Book");
         }
-        Optional<BorrowedBook> result = BorrowedBookRepository.findFirstByBook_idAndPatron_id(bookId, patronId);
+        Optional<BorrowedBook> result;
+        try {
+            result = BorrowedBookRepository.findFirstByBook_idAndPatron_id(bookId, patronId);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Could not verify borrowed book");
+        }
         if (result.isPresent()) {
             theBorrowedBook = result.get();
-            if(theBorrowedBook.getStatus() == BorrowedBookStatus.Borrowed) {
+            if (theBorrowedBook.getStatus() == BorrowedBookStatus.Borrowed) {
                 throw new BadRequestException("This Patron has already borrowed this book and did not return it");
+            } else {
+                theBorrowedBook.setStatus(BorrowedBookStatus.Borrowed);
             }
-            else {
-                theBorrowedBook.setStatus(BorrowedBookStatus.Borrowed);                
-            }
-        }
-        else {
+        } else {
             theBorrowedBook = new BorrowedBook(bookId, patronId, BorrowedBookStatus.Borrowed);
         }
         theBook.setStock(theBook.getStock() - 1);
-        BookService.updateBook(theBook);
-        return BorrowedBookRepository.save(theBorrowedBook);
+        try {
+            BookService.updateBook(theBook);
+            return BorrowedBookRepository.save(theBorrowedBook);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Could not complete transaction");
+        }
+
     }
 
     @Override
     @Transactional
     public BorrowedBook returnBorrowedBook(Long bookId, Long patronId) {
-        Book theBook = BookService.getBook(bookId);
-        BorrowedBook theBorrowedBook = getBorrowedBookByIds(bookId, patronId);
-        if(theBorrowedBook.getStatus()==BorrowedBookStatus.Returned) {
+        Book theBook;
+        BorrowedBook theBorrowedBook;
+        try {
+            theBook = BookService.getBook(bookId);
+            theBorrowedBook = getBorrowedBookByIds(bookId, patronId);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Could not verify borrowed book");
+        }
+        if (theBorrowedBook.getStatus() == BorrowedBookStatus.Returned) {
             throw new BadRequestException("This Patron has already returned this book");
         }
         theBorrowedBook.setStatus(BorrowedBookStatus.Returned);
         theBook.setStock(theBook.getStock() + 1);
-        BookService.updateBook(theBook);
-        return BorrowedBookRepository.save(theBorrowedBook);
+        try {
+            BookService.updateBook(theBook);
+            return BorrowedBookRepository.save(theBorrowedBook);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Could not complete transaction");
+        }
     }
 
     @Override
     public BorrowedBook deleteBorrowedBook(Long id) {
-        BorrowedBookRepository.deleteById(id);
-        return null;
+        try {
+            BorrowedBookRepository.deleteById(id);
+            return null;
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Could not delete borrowed book");
+        }
+
     }
 
 }
