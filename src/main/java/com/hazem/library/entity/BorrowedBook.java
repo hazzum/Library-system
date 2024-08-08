@@ -24,6 +24,24 @@ public class BorrowedBook {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
+    @ManyToOne
+    @JoinColumn(name = "patron_id", nullable = false)
+    private Patron patron;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "resourceType")
+    private BorrowedBookStatus status;
+
+    public BorrowedBook() {
+
+    }
+
+    public BorrowedBook(Book book, Patron patron, BorrowedBookStatus status) {
+        this.book = book;
+        this.patron = patron;
+        this.status = status;
+    }
+
     public Book getBook() {
         return this.book;
     }
@@ -47,14 +65,6 @@ public class BorrowedBook {
     public void setStatus(BorrowedBookStatus status) {
         this.status = status;
     }
-
-    @ManyToOne
-    @JoinColumn(name = "patron_id", nullable = false)
-    private Patron patron;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "resourceType")
-    private BorrowedBookStatus status;
 
     @Override
     public String toString() {
