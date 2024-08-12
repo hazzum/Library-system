@@ -20,9 +20,9 @@
 
 ### borrowed_book
 
-| id                 | book_id                      | patron_id                      | constraints                |
-| ------------------ | ---------------------------- | ------------------------------ | -------------------------- |
-| serial primary key | foreign key references(book) | foreign key references(patron) | UNIQUE(book_id, patron_id) |
+| id                 | book_id                      | patron_id                      | status                     | constraints                |
+| ------------------ | ---------------------------- | ------------------------------ | -------------------------- | -------------------------- |
+| serial primary key | foreign key references(book) | foreign key references(patron) | ENUM ("Borrowed, Returned) | UNIQUE(book_id, patron_id) |
 
 ### All tables have additional hidden columns, created and updated, for creation and update timestamps
 
